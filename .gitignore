@@ -10,3 +10,4 @@ composer.phar
 /app/config/packages
 /public/packages
 .env
+/node_modules
