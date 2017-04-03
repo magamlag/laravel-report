@@ -1,0 +1,23 @@
+SELECT invoiceheader.*, invoicedetail.*, sum(invoiceheader.invoiceamount) as total FROM `invoiceheader` LEFT JOIN `invoicedetail` ON invoiceheader.invoicenum_header = invoicedetail.invoicenum_detail where invoiceheader.invoicedate between 2014-01-01 and 2014-01-03
+
+
+SELECT ih.invoicenum, ih.invoicedate, ih.invoiceamount, COALESCE( SUM( id.detailamount ) , 0 ) AS detailamount, ih.invoiceamount - COALESCE( SUM( id.detailamount ) , 0 ) AS discrepancy
+FROM invoiceheader AS ih
+LEFT JOIN invoicedetail AS id ON ih.invoicenum = id.invoicenum
+WHERE ih.invoicedate >= @date_start
+AND ih.invoicedate <= @date_finish
+GROUP BY ih.invoicenum
+HAVING discrepancy !=0
+LIMIT 0 , 30
+
+
+SELECT ih.invoicenum, ih.invoicedate, id.trackingno, id.detailamount, COALESCE( SUM( ic.chargeamount ) , 0 ) AS chargeamount, id.detailamount - COALESCE( SUM( ic.chargeamount ) , 0 ) AS discrepancy
+FROM invoiceheader AS ih
+INNER JOIN invoicedetail AS id ON ih.invoicenum = id.invoicenum
+LEFT JOIN invoicecharges AS ic ON ih.invoicenum = ic.invoicenum
+AND id.trackingno = ic.trackingno
+WHERE ih.invoicedate >= @date_start
+AND ih.invoicedate <= @date_finish
+GROUP BY id.trackingno
+HAVING discrepancy !=0
+LIMIT 0 , 30
