@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 use DB;
@@ -37,11 +38,13 @@ class ReportController extends Controller
     public function showReport(Request $request)
     {
         //
-            $date1 = $request->input('date1');
-            $date2 = $request->input('date2');
+            $date1 = $request->input('date1') ?: '01/01/1970';
+            $date2 = $request->input('date2') ?: Carbon::now();
 
         $result = DB::select(
-            DB::raw("SELECT invoiceheader.*, sum(detailamount) as total, invoicedetail.* FROM `invoiceheader` LEFT JOIN `invoicedetail` ON invoiceheader.invoicenum_header=invoicedetail.invoicenum_detail where invoicedate between :date1 and :date2"),['date1'=>$date1,'date2'=>$date2]);
+            DB::raw("SELECT in_h.*, sum(in_d.detailamount) as total, in_d.* FROM `invoiceheader` in_h 
+              LEFT JOIN `invoicedetail` in_d ON in_h.invoicenum_header=in_d.invoicenum_detail 
+              WHERE invoicedate BETWEEN :date1 AND :date2"),['date1'=>$date1,'date2'=>$date2]);
 
         return \Response::json(array(
             'success' => true,
