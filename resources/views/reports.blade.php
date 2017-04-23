@@ -68,6 +68,8 @@
         </table>
     </div>
 </div>
-<script src="/js/invoice_header.js"></script>
+
+<script src="{{ elixir('js/invoice_header.js') }}"></script>
+
 </body>
 </html>
