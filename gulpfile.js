@@ -1,5 +1,8 @@
 var elixir = require('laravel-elixir');
 
+//Enable to use webpack in Laravel 5.3
+require('laravel-elixir-webpack');
+
 /*
  |--------------------------------------------------------------------------
  | Elixir Asset Management
@@ -11,12 +14,20 @@ var elixir = require('laravel-elixir');
  |
  */
 
-elixir(function(mix) {
-    mix.sass('app.scss');
+elixir(function (mix) {
+	mix.sass('app.scss');
 });
 
-elixir(function(mix) {
-	mix.browserify('app.js'); });
+elixir(function (mix) {
+	mix.webpack('./resources/assets/js/invoice_header.js', './public/js/invoice_header.js');
+});
 
-elixir(function(mix) {
-	mix.version(['css/app.css', 'js/app.js']); });
+elixir(function (mix) {
+	mix.version(['css/app.css', 'js/invoice_header.js']);
+});
+
+elixir(function (mix) {
+	mix.browserSync({
+		proxy: env('APP_SITE_NAME')
+	});
+});
